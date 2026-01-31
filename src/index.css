@@ -1,0 +1,244 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* kraogotthesauce Design System
+   Colors extracted from sauce.png palette
+   All colors in HSL format
+*/
+
+@layer base {
+  :root {
+    /* Core brand colors from sauce.png */
+    --soft-pink: 319 67% 84%;
+    --lavender: 257 34% 73%;
+    --muted-blue: 222 33% 59%;
+    --dusty-rose: 354 42% 68%;
+    --plum: 320 26% 37%;
+    --near-black: 350 5% 11%;
+    
+    /* Semantic tokens */
+    --background: 350 5% 11%;
+    --foreground: 319 67% 95%;
+
+    --card: 350 8% 15%;
+    --card-foreground: 319 67% 95%;
+
+    --popover: 350 8% 15%;
+    --popover-foreground: 319 67% 95%;
+
+    --primary: 319 67% 84%;
+    --primary-foreground: 350 5% 11%;
+
+    --secondary: 257 34% 73%;
+    --secondary-foreground: 350 5% 11%;
+
+    --muted: 350 8% 20%;
+    --muted-foreground: 319 40% 70%;
+
+    --accent: 354 42% 68%;
+    --accent-foreground: 350 5% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 350 10% 25%;
+    --input: 350 10% 25%;
+    --ring: 319 67% 84%;
+
+    --radius: 0.75rem;
+
+    /* Custom gradients */
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(319 67% 84% / 0.1) 0%,
+      hsl(257 34% 73% / 0.1) 50%,
+      hsl(222 33% 59% / 0.1) 100%
+    );
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Manrope', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .hover-scale {
+    @apply transition-transform duration-300 ease-out;
+  }
+  
+  .hover-scale:hover {
+    @apply scale-[1.02];
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  .parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .parallax-bg-fade {
+    animation: bgFadeIn 1s ease-out forwards;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    will-change: opacity;
+    contain: paint;
+  }
+
+  .page-load-fade {
+    animation: pageLoad 0.6s ease-out forwards;
+  }
+
+  .audio-playing {
+    animation: audioPulse 1.5s ease-in-out infinite;
+  }
+
+  .profile-float {
+    transition: transform 0.5s ease-out;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  .profile-float:hover {
+    animation: profileFloat 2s ease-in-out infinite;
+  }
+
+  /* Rotating gradient border */
+  .rotating-gradient-wrapper {
+    position: relative;
+  }
+
+  .rotating-gradient-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--primary)),
+      hsl(var(--secondary)),
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
+    border-radius: 9999px;
+    animation: rotateGradient 4s linear infinite;
+    z-index: -1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .parallax-bg,
+    .parallax-bg-fade {
+      background-attachment: scroll;
+    }
+    
+    .profile-float:hover {
+      animation: none;
+    }
+
+    .rotating-gradient-wrapper::before {
+      animation: none;
+    }
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--secondary)) 50%,
+      hsl(var(--accent)) 100%
+    );
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bgFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes profileFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes rotateGradient {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pageLoad {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes audioPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px hsl(var(--primary) / 0);
+  }
+}
