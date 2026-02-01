@@ -4,19 +4,23 @@ import WaveformDivider from "@/components/WaveformDivider";
 import ServicesSection from "@/components/ServicesSection";
 import Footer from "@/components/Footer";
 import ScrollProgress from "@/components/ScrollProgress";
+import { StructuredData } from "@/components/StructuredData";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background page-load-fade">
+    <>
+      <StructuredData />
       <Header />
       <ScrollProgress />
-      <main>
-        <HeroSection />
-        <WaveformDivider />
-        <ServicesSection />
-      </main>
-      <Footer />
-    </div>
+      <div className="min-h-screen bg-background page-load-fade">
+        <main className="relative">
+          <HeroSection />
+          <WaveformDivider />
+          <ServicesSection />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 

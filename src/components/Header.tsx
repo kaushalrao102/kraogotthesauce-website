@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Instagram, Mail, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackExternalLink } from "@/lib/analytics";
 
 // Custom SVG icons for platforms
 const XIcon = ({ className }: { className?: string }) => (
@@ -104,9 +105,9 @@ export const Header = () => {
     const updateScrollState = () => {
       setIsScrolled(window.scrollY > 50);
 
-      // Determine active section
-      const sections = ["about", "services"];
-      for (const section of sections.reverse()) {
+      // Determine active section (check in reverse order for proper highlighting)
+      const sections = ["services", "about"];
+      for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -140,7 +141,12 @@ export const Header = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 bg-transparent"
+      className={cn(
+        "fixed top-0 left-0 right-0 w-full z-[100] transition-all duration-300",
+        isScrolled
+          ? "bg-background/95 backdrop-blur-lg shadow-lg border-b border-border"
+          : "bg-background/60 backdrop-blur-sm"
+      )}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -192,6 +198,7 @@ export const Header = () => {
                 rel="noopener noreferrer"
                 aria-label={music.label}
                 className="text-muted-foreground hover:text-primary transition-colors duration-200 p-2"
+                onClick={() => trackExternalLink(music.href, music.label)}
               >
                 <music.icon className="w-5 h-5" />
               </a>
@@ -209,6 +216,7 @@ export const Header = () => {
                 rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                 aria-label={social.label}
                 className="text-muted-foreground hover:text-primary transition-colors duration-200 p-2"
+                onClick={() => !social.href.startsWith("mailto") && trackExternalLink(social.href, social.label)}
               >
                 <social.icon className="w-5 h-5" />
               </a>
@@ -275,6 +283,7 @@ export const Header = () => {
                     rel="noopener noreferrer"
                     aria-label={music.label}
                     className="text-muted-foreground hover:text-primary transition-all active:scale-95 p-2"
+                    onClick={() => trackExternalLink(music.href, music.label)}
                   >
                     <music.icon className="w-6 h-6" />
                   </a>
@@ -294,6 +303,7 @@ export const Header = () => {
                     rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                     aria-label={social.label}
                     className="text-muted-foreground hover:text-primary transition-all active:scale-95 p-2"
+                    onClick={() => !social.href.startsWith("mailto") && trackExternalLink(social.href, social.label)}
                   >
                     <social.icon className="w-6 h-6" />
                   </a>

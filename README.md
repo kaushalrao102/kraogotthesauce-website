@@ -1,7 +1,102 @@
-Personal website for music production. This project is built with:
+# kraogotthesauce Website
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Personal website for music production showcasing hip-hop beats, services, and portfolio.
+
+## Tech Stack
+
+- **Vite** - Build tool and dev server
+- **TypeScript** - Type safety
+- **React** - UI framework
+- **shadcn-ui** - UI component library
+- **Tailwind CSS** - Styling
+- **React Router** - Routing
+- **TanStack Query** - Data fetching (configured, ready for API integration)
+
+## Features
+
+- 🎵 Music producer portfolio
+- 🎨 Modern, responsive design
+- ♿ Accessibility features
+- 🔍 SEO optimized (structured data, sitemap, meta tags)
+- 🛡️ Error boundaries for graceful error handling
+- 📱 Mobile-first responsive design
+- 🎭 Smooth animations and transitions
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ or Bun
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+# or
+bun install
+
+# Start development server
+npm run dev
+# or
+bun dev
+```
+
+The site will be available at `http://localhost:8080`
+
+### Build for Production
+
+```bash
+npm run build
+# or
+bun run build
+```
+
+The production build will be in the `dist/` directory.
+
+## Project Structure
+
+```
+src/
+├── components/       # React components
+│   ├── ui/          # shadcn-ui components
+│   ├── Header.tsx   # Navigation header
+│   ├── HeroSection.tsx
+│   ├── ServicesSection.tsx
+│   ├── Footer.tsx
+│   ├── ErrorBoundary.tsx
+│   └── StructuredData.tsx
+├── pages/           # Page components
+├── hooks/           # Custom React hooks
+├── lib/             # Utility functions
+└── assets/          # Images, audio, etc.
+
+public/
+├── sitemap.xml      # SEO sitemap
+├── robots.txt       # Search engine directives
+└── _headers         # Security headers (Netlify/Cloudflare)
+```
+
+## Improvements & Fixes
+
+See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for a complete list of fixes and enhancements applied.
+
+## Deployment
+
+The site is configured for static hosting. Deploy to:
+- Netlify
+- Vercel
+- Cloudflare Pages
+- GitHub Pages
+- Any static hosting service
+
+### Environment Variables
+
+Currently none required. Add to `.env` if needed:
+- Analytics IDs
+- API keys (if adding contact forms)
+
+## License
+
+Personal project - All rights reserved.

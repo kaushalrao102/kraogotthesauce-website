@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Instagram, Mail, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackExternalLink, trackEvent } from "@/lib/analytics";
 
 // Custom SVG icons
 const XIcon = ({ className }: { className?: string }) => (
@@ -112,6 +113,7 @@ export const Footer = () => {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    trackEvent('click', 'Navigation', 'Back to Top');
   };
 
   return (
@@ -139,6 +141,7 @@ export const Footer = () => {
                 rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                 aria-label={social.label}
                 className="group relative p-4 md:p-5 rounded-full bg-muted hover:bg-primary/10 border border-border hover:border-primary/50 transition-all duration-300"
+                onClick={() => !social.href.startsWith("mailto") && trackExternalLink(social.href, social.label)}
               >
                 <social.icon className="w-6 h-6 md:w-7 md:h-7 text-muted-foreground group-hover:text-primary transition-colors" />
                 
@@ -163,6 +166,7 @@ export const Footer = () => {
                 rel="noopener noreferrer"
                 aria-label={music.label}
                 className="group relative p-3 md:p-4 rounded-full bg-muted hover:bg-primary/10 border border-border hover:border-primary/50 transition-all duration-300"
+                onClick={() => trackExternalLink(music.href, music.label)}
               >
                 <music.icon className="w-6 h-6 md:w-7 md:h-7 text-muted-foreground group-hover:text-primary transition-colors" />
                 

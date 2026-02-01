@@ -12,15 +12,22 @@ export const HeroSection = () => {
   const [showFullBio, setShowFullBio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handleProfileClick = () => {
+  const handleProfileClick = async () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setIsPlaying(false);
       } else {
-        audioRef.current.play();
-        setIsPlaying(true);
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (error) {
+          // Browser autoplay policy may prevent playback
+          // User interaction is required for audio playback in most browsers
+          console.warn("Audio playback failed:", error);
+          setIsPlaying(false);
+        }
       }
     }
   };
@@ -96,7 +103,13 @@ export const HeroSection = () => {
               )}
             </button>
             {/* Hidden audio element */}
-            <audio ref={audioRef} src={tagAudio} onEnded={() => setIsPlaying(false)} />
+            <audio 
+              ref={audioRef} 
+              src={tagAudio} 
+              onEnded={() => setIsPlaying(false)}
+              aria-label="Audio tag - click profile image to play"
+              preload="metadata"
+            />
           </div>
 
           {/* Headline */}

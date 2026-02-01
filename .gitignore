@@ -43,3 +43,15 @@ Thumbs.db
 
 # Git
 main/.git/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Music files (now using Cloudinary CDN)
+# Exclude music files from git since they're on Cloudinary
+music/**/*.mp3
+music/**/*.wav
+music/**/*.m4a
+music/**/*.flac
