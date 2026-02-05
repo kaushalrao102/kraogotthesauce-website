@@ -1,6 +1,6 @@
 # kraogotthesauce Website
 
-Personal website for music production showcasing hip-hop beats, services, and portfolio.
+Personal website for music production showcasing hip-hop beats, artist services, and portfolio.
 
 ## Tech Stack
 
@@ -21,39 +21,6 @@ Personal website for music production showcasing hip-hop beats, services, and po
 - 🛡️ Error boundaries for graceful error handling
 - 📱 Mobile-first responsive design
 - 🎭 Smooth animations and transitions
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ or Bun
-- npm, yarn, pnpm, or bun
-
-### Installation
-
-```bash
-# Install dependencies
-npm install
-# or
-bun install
-
-# Start development server
-npm run dev
-# or
-bun dev
-```
-
-The site will be available at `http://localhost:8080`
-
-### Build for Production
-
-```bash
-npm run build
-# or
-bun run build
-```
-
-The production build will be in the `dist/` directory.
 
 ## Project Structure
 
@@ -77,25 +44,6 @@ public/
 ├── robots.txt       # Search engine directives
 └── _headers         # Security headers (Netlify/Cloudflare)
 ```
-
-## Improvements & Fixes
-
-See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for a complete list of fixes and enhancements applied.
-
-## Deployment
-
-The site is configured for static hosting. Deploy to:
-- Netlify
-- Vercel
-- Cloudflare Pages
-- GitHub Pages
-- Any static hosting service
-
-### Environment Variables
-
-Currently none required. Add to `.env` if needed:
-- Analytics IDs
-- API keys (if adding contact forms)
 
 ## License
 

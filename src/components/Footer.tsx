@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Instagram, Mail, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackExternalLink, trackEvent } from "@/lib/analytics";
+import { toast } from "@/hooks/use-toast";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 // Custom SVG icons
 const XIcon = ({ className }: { className?: string }) => (
@@ -91,6 +93,10 @@ const musicLinks = [
 
 export const Footer = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const { elementRef, hasIntersected } = useIntersectionObserver({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
 
   useEffect(() => {
     let ticking = false;
@@ -116,22 +122,42 @@ export const Footer = () => {
     trackEvent('click', 'Navigation', 'Back to Top');
   };
 
+  const handleEmailClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const email = "kraogotthesauce@gmail.com";
+    try {
+      await navigator.clipboard.writeText(email);
+      toast({
+        title: "Email copied!",
+        description: `${email} has been copied to your clipboard.`,
+      });
+      trackEvent('click', 'Email', 'Copy Email');
+    } catch (err) {
+      // Fallback: if clipboard API fails, just open mailto
+      // The default mailto behavior will handle it
+    }
+  };
+
   return (
-    <footer className="relative py-16 md:py-20 bg-card border-t border-border">
+    <footer
+      ref={elementRef as React.RefObject<HTMLElement>}
+      className={cn(
+        "relative pt-8 md:pt-10 pb-16 md:pb-20 bg-card border-t border-border transition-all duration-700 min-h-[200px]",
+        hasIntersected
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-8"
+      )}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Connect Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
             Let's Connect
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Ready to work together? Reach out on social media or drop me an email.
-          </p>
         </div>
 
         {/* Social Links */}
         <div id="connect" className="mb-8">
-          <p className="text-xs text-muted-foreground text-center mb-4 uppercase tracking-wider">Connect with me</p>
+          <p className="text-xs text-muted-foreground text-center mb-4 uppercase tracking-wider">Reach Out</p>
           <div className="flex justify-center items-center gap-6 md:gap-8">
             {socialLinks.map((social) => (
               <a
@@ -140,8 +166,19 @@ export const Footer = () => {
                 target={social.href.startsWith("mailto") ? undefined : "_blank"}
                 rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                 aria-label={social.label}
-                className="group relative p-4 md:p-5 rounded-full bg-muted hover:bg-primary/10 border border-border hover:border-primary/50 transition-all duration-300"
-                onClick={() => !social.href.startsWith("mailto") && trackExternalLink(social.href, social.label)}
+                className="group relative p-4 md:p-5 rounded-full bg-muted hover:bg-primary/10 border border-border hover:border-primary/50 transition-all duration-300 hover:scale-110"
+                onClick={(e) => {
+                  if (social.href.startsWith("mailto")) {
+                    e.preventDefault();
+                    handleEmailClick(e);
+                  } else {
+                    trackExternalLink(social.href, social.label);
+                    toast({
+                      title: "Opening link",
+                      description: `Opening ${social.label}...`,
+                    });
+                  }
+                }}
               >
                 <social.icon className="w-6 h-6 md:w-7 md:h-7 text-muted-foreground group-hover:text-primary transition-colors" />
                 
@@ -165,8 +202,14 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={music.label}
-                className="group relative p-3 md:p-4 rounded-full bg-muted hover:bg-primary/10 border border-border hover:border-primary/50 transition-all duration-300"
-                onClick={() => trackExternalLink(music.href, music.label)}
+                className="group relative p-3 md:p-4 rounded-full bg-muted hover:bg-primary/10 border border-border hover:border-primary/50 transition-all duration-300 hover:scale-110"
+                onClick={() => {
+                  trackExternalLink(music.href, music.label);
+                  toast({
+                    title: "Opening link",
+                    description: `Opening ${music.label}...`,
+                  });
+                }}
               >
                 <music.icon className="w-6 h-6 md:w-7 md:h-7 text-muted-foreground group-hover:text-primary transition-colors" />
                 
@@ -193,6 +236,12 @@ export const Footer = () => {
       {/* Back to Top Button */}
       <button
         onClick={scrollToTop}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            scrollToTop();
+          }
+        }}
         aria-label="Back to top"
         className={cn(
           "fixed bottom-6 right-6 md:bottom-8 md:right-8 p-3 md:p-4 rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",

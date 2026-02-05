@@ -65,6 +65,14 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* Account for fixed header */
+    @apply bg-background;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      scroll-padding-top: 6rem; /* Account for larger header on desktop */
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -84,6 +92,20 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Manrope', system-ui, sans-serif;
+  }
+
+  /* Enhanced focus indicators for keyboard navigation */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Ensure buttons and interactive elements have visible focus */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
   }
 }
 
@@ -170,6 +192,12 @@
     .rotating-gradient-wrapper::before {
       animation: none;
     }
+
+    .animate-fade-in-scale,
+    .animate-slide-up,
+    .animate-pulse-subtle {
+      animation: none;
+    }
   }
 }
 
@@ -182,6 +210,28 @@
       hsl(var(--secondary)) 50%,
       hsl(var(--accent)) 100%
     );
+  }
+
+  /* Skip to content link - hidden until focused */
+  .skip-link {
+    @apply absolute left-4 top-4 z-[200] -translate-y-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+
+  .skip-link:focus {
+    @apply translate-y-0;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in-scale {
+    animation: fadeInScale 0.6s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideInFromBottom 0.6s ease-out forwards;
+  }
+
+  .animate-pulse-subtle {
+    animation: pulseSubtle 3s ease-in-out infinite;
   }
 }
 
@@ -240,5 +290,38 @@
   }
   50% {
     box-shadow: 0 0 0 12px hsl(var(--primary) / 0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSubtle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
   }
 }

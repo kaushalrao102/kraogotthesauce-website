@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Instagram, Mail, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackExternalLink } from "@/lib/analytics";
+import { toast } from "@/hooks/use-toast";
 
 // Custom SVG icons for platforms
 const XIcon = ({ className }: { className?: string }) => (
@@ -98,6 +99,8 @@ export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -131,11 +134,83 @@ export const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Escape key handler to close mobile menu
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+        // Return focus to menu button
+        mobileMenuButtonRef.current?.focus();
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [isMobileMenuOpen]);
+
+  // Body scroll lock when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  // Focus trap for mobile menu
+  useEffect(() => {
+    if (!isMobileMenuOpen || !mobileMenuRef.current) return;
+
+    const menu = mobileMenuRef.current;
+    const focusableElements = menu.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    // Focus first element when menu opens
+    firstElement?.focus();
+    menu.addEventListener("keydown", handleTabKey);
+
+    return () => {
+      menu.removeEventListener("keydown", handleTabKey);
+    };
+  }, [isMobileMenuOpen]);
+
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // Calculate header height (h-16 md:h-20 = 64px/80px)
+      const headerHeight = window.innerWidth >= 768 ? 80 : 64;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - headerHeight - 20; // 20px padding
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -149,21 +224,21 @@ export const Header = () => {
       )}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="relative flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <a
-            href="#about"
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavClick("#about");
-            }}
-            className="text-xl md:text-2xl font-bold text-primary hover:opacity-80 transition-opacity"
-          >
-            kraogotthesauce
-          </a>
+                  <a
+                    href="#about"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick("#about");
+                    }}
+                    className="text-xl md:text-2xl font-bold text-primary hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
+                  >
+                    kraogotthesauce
+                  </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -172,12 +247,13 @@ export const Header = () => {
                   e.preventDefault();
                   handleNavClick(link.href);
                 }}
-                className={cn(
-                  "relative text-sm font-medium transition-colors duration-200",
-                  activeSection === link.href.slice(1)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
+                        className={cn(
+                  // Underline-only selected state; avoid focus ring "pill" on click
+                  "relative text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:underline focus-visible:underline-offset-8 focus-visible:decoration-2 focus-visible:decoration-primary rounded-none",
+                          activeSection === link.href.slice(1)
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
               >
                 {link.label}
                 {activeSection === link.href.slice(1) && (
@@ -197,8 +273,14 @@ export const Header = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={music.label}
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 p-2"
-                onClick={() => trackExternalLink(music.href, music.label)}
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
+                onClick={() => {
+                  trackExternalLink(music.href, music.label);
+                  toast({
+                    title: "Opening link",
+                    description: `Opening ${music.label}...`,
+                  });
+                }}
               >
                 <music.icon className="w-5 h-5" />
               </a>
@@ -215,8 +297,16 @@ export const Header = () => {
                 target={social.href.startsWith("mailto") ? undefined : "_blank"}
                 rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                 aria-label={social.label}
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 p-2"
-                onClick={() => !social.href.startsWith("mailto") && trackExternalLink(social.href, social.label)}
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
+                onClick={() => {
+                  if (!social.href.startsWith("mailto")) {
+                    trackExternalLink(social.href, social.label);
+                    toast({
+                      title: "Opening link",
+                      description: `Opening ${social.label}...`,
+                    });
+                  }
+                }}
               >
                 <social.icon className="w-5 h-5" />
               </a>
@@ -225,8 +315,9 @@ export const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
+            ref={mobileMenuButtonRef}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
+            className="md:hidden p-2 text-foreground hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
@@ -246,6 +337,10 @@ export const Header = () => {
           />
         )}
         <div
+          ref={mobileMenuRef}
+          aria-modal="true"
+          role="dialog"
+          aria-label="Mobile navigation menu"
           className={cn(
             "md:hidden overflow-hidden transition-all duration-300 ease-out relative z-50",
             isMobileMenuOpen ? "max-h-[500px] pb-6" : "max-h-0"
@@ -260,12 +355,12 @@ export const Header = () => {
                   e.preventDefault();
                   handleNavClick(link.href);
                 }}
-                className={cn(
-                  "text-lg font-medium py-2 transition-all active:scale-95",
-                  activeSection === link.href.slice(1)
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                )}
+                        className={cn(
+                          "text-lg font-medium py-2 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm",
+                          activeSection === link.href.slice(1)
+                            ? "text-primary"
+                            : "text-muted-foreground"
+                        )}
               >
                 {link.label}
               </a>
@@ -275,16 +370,22 @@ export const Header = () => {
             <div className="pt-4 border-t border-border">
               <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider">Listen</p>
               <div className="flex items-center gap-6">
-                {musicLinks.map((music) => (
-                  <a
-                    key={music.label}
-                    href={music.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={music.label}
-                    className="text-muted-foreground hover:text-primary transition-all active:scale-95 p-2"
-                    onClick={() => trackExternalLink(music.href, music.label)}
-                  >
+                        {musicLinks.map((music) => (
+                          <a
+                            key={music.label}
+                            href={music.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={music.label}
+                            className="text-muted-foreground hover:text-primary transition-all active:scale-95 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
+                            onClick={() => {
+                              trackExternalLink(music.href, music.label);
+                              toast({
+                                title: "Opening link",
+                                description: `Opening ${music.label}...`,
+                              });
+                            }}
+                          >
                     <music.icon className="w-6 h-6" />
                   </a>
                 ))}
@@ -295,16 +396,24 @@ export const Header = () => {
             <div className="pt-4 border-t border-border">
               <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider">Connect</p>
               <div className="flex items-center gap-6">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target={social.href.startsWith("mailto") ? undefined : "_blank"}
-                    rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
-                    aria-label={social.label}
-                    className="text-muted-foreground hover:text-primary transition-all active:scale-95 p-2"
-                    onClick={() => !social.href.startsWith("mailto") && trackExternalLink(social.href, social.label)}
-                  >
+                        {socialLinks.map((social) => (
+                          <a
+                            key={social.label}
+                            href={social.href}
+                            target={social.href.startsWith("mailto") ? undefined : "_blank"}
+                            rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                            aria-label={social.label}
+                            className="text-muted-foreground hover:text-primary transition-all active:scale-95 p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
+                            onClick={() => {
+                              if (!social.href.startsWith("mailto")) {
+                                trackExternalLink(social.href, social.label);
+                                toast({
+                                  title: "Opening link",
+                                  description: `Opening ${social.label}...`,
+                                });
+                              }
+                            }}
+                          >
                     <social.icon className="w-6 h-6" />
                   </a>
                 ))}

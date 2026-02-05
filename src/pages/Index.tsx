@@ -13,7 +13,7 @@ const Index = () => {
       <Header />
       <ScrollProgress />
       <div className="min-h-screen bg-background page-load-fade">
-        <main className="relative">
+        <main id="main-content" className="relative bg-background" tabIndex={-1}>
           <HeroSection />
           <WaveformDivider />
           <ServicesSection />

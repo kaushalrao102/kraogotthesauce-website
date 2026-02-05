@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Skeleton } from "@/components/ui/skeleton";
 import beatmakingImage from "@/assets/beatmaking.png";
 import masteringImage from "@/assets/mastering.png";
 import critiqueImage from "@/assets/critique.png";
@@ -49,7 +50,18 @@ const services: Service[] = [
 ];
 
 const scrollToConnect = () => {
-  document.getElementById("connect")?.scrollIntoView({ behavior: "smooth" });
+  const element = document.getElementById("connect");
+  if (element) {
+    // Calculate header height (h-16 md:h-20 = 64px/80px)
+    const headerHeight = window.innerWidth >= 768 ? 80 : 64;
+    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - headerHeight - 20; // 20px padding
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
 };
 
 export const ServicesSection = () => {
@@ -83,12 +95,12 @@ export const ServicesSection = () => {
     <section
       id="services"
       ref={sectionRef}
-      className="relative py-12 md:py-16"
+      className="relative pt-3 md:pt-4 pb-12 md:pb-16"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div
-          className={`text-center mb-12 md:mb-16 transition-all duration-700 ${
+          className={`text-center mb-6 md:mb-8 transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -101,10 +113,10 @@ export const ServicesSection = () => {
         <div className="max-w-4xl mx-auto">
           <Accordion type="single" collapsible className="space-y-4">
             {services.map((service, index) => (
-              <AccordionItem
+                <AccordionItem
                 key={service.id}
                 value={service.id}
-                className={`bg-card border border-border rounded-xl overflow-hidden hover-scale transition-all duration-500 ${
+                className={`bg-card border border-border rounded-xl overflow-hidden hover-scale transition-all duration-500 hover:shadow-lg hover:shadow-primary/10 ${
                   isVisible
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-8"
@@ -118,7 +130,7 @@ export const ServicesSection = () => {
                     {/* Service Image - Circular with border and skeleton */}
                     <div className="relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-primary/30" style={{ aspectRatio: '1/1' }}>
                       {!loadedImages[service.id] && (
-                        <div className="absolute inset-0 bg-muted animate-pulse" />
+                        <Skeleton className="absolute inset-0 w-full h-full rounded-full" />
                       )}
                       <img
                         src={service.image}
@@ -150,7 +162,13 @@ export const ServicesSection = () => {
                     </p>
                     <button
                       onClick={scrollToConnect}
-                      className="px-6 py-2 border border-primary text-primary rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-sm font-medium"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          scrollToConnect();
+                        }
+                      }}
+                      className="px-6 py-2 border border-primary text-primary rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                     >
                       Get In Touch
                     </button>
