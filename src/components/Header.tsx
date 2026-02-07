@@ -232,7 +232,7 @@ export const Header = () => {
                       e.preventDefault();
                       handleNavClick("#about");
                     }}
-                    className="text-xl md:text-2xl font-bold text-primary hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
+                    className="text-xl md:text-2xl font-bold text-primary hover:opacity-80 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
                   >
                     kraogotthesauce
                   </a>

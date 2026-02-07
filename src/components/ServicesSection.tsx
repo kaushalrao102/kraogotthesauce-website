@@ -25,16 +25,16 @@ const services: Service[] = [
     title: "Beatmaking",
     tagline: "Custom instrumentals crafted to your vision",
     description:
-      "I love making music, and I feel inspired when challenged to create a specific sound or vibe that's different from what I would typically make. Over time, I've developed a style that blends sample-based, boom-bap, and soulful production, but don't let that limit your vision—I'm always down to experiment and push into new territory. Reach out to collaborate or commission a one-of-a-kind beat.",
+      "I love making music, and I feel inspired when challenged to create a specific sound. If you are an artist or musical enthusiast looking for a specific type of production, let me know and we can work together on it. I’ve made beats in a variety of genres (bay area, trap, cloud, detroit, rage, hyperpop, RnB, etc.) and I don’t hold myself back from experimentation.",
     image: beatmakingImage,
-    imageAlt: "kraogotthesauce hands on MPC creating hip-hop beats",
+    imageAlt: "hands on MPC creating hip-hop beats",
   },
   {
     id: "mastering",
     title: "Mixing & Mastering",
     tagline: "Professional polish for release-ready sound",
     description:
-      "I pride myself on making my music sound professional and polished, even when the aesthetic calls for a lo-fi or gritty texture. If you have a finished song that needs mix refinement or mastering for streaming platforms, I can help bring out clarity, punch, and warmth while preserving the character of your original vision. From balancing levels to final loudness optimization, I handle every detail.",
+      "I pride myself on making my music sound professional and polished. I struggled with mixing and mastering early on in my musical “career”, but over time, I’ve refined a workflow that prioritizes clarity, balance, and consistency, while meeting loudness and dynamic expectations across major streaming platforms. If you’re looking for support at accessible (cheap!) rates, please reach out and we can discuss your project.",
     image: masteringImage,
     imageAlt: "DAW interface showing mixing and mastering session",
   },
@@ -43,7 +43,7 @@ const services: Service[] = [
     title: "Music Critique",
     tagline: "Constructive feedback to elevate your craft",
     description:
-      "I tend to listen to music with a producer's ear, focusing not just on lyrics and vibe but also on structure, sound selection, and mix decisions. If you're looking for honest, constructive feedback on your latest track, EP, or album, I offer detailed critique sessions to help you identify strengths and areas for improvement—delivered with respect and a genuine desire to see you grow.",
+      "I tend to listen to music with a producer’s ear, focusing not just on lyrics but also focusing heavily on technical aspects such as layering, dynamics, leveling, structure, and harmonics. If you are looking for someone to deeply listen and try to understand your music, as well as provide constructive (and actionable!) feedback, I’m happy to do so for free.",
     image: critiqueImage,
     imageAlt: "Music producer consultation providing track feedback",
   },
