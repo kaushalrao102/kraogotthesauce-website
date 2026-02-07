@@ -77,17 +77,17 @@ const socialLinks = [
 const musicLinks = [
   {
     href: "https://open.spotify.com/artist/2D93GdQLZxSWecarb2NIY9?si=3gDIhEaJQwa1oIokwarIiQ",
-    label: "Listen on Spotify",
+    label: "Spotify",
     icon: SpotifyIcon,
   },
   {
     href: "https://music.apple.com/us/artist/kraogotthesauce/1506258415",
-    label: "Listen on Apple Music",
+    label: "Apple Music",
     icon: AppleMusicIcon,
   },
   {
     href: "https://soundcloud.com/kraogotthesauce",
-    label: "Listen on SoundCloud",
+    label: "SoundCloud",
     icon: SoundCloudIcon,
   },
 ];
