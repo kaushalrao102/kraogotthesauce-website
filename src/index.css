@@ -142,14 +142,8 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    will-change: opacity;
+    will-change: transform, opacity;
     contain: paint;
-  }
-
-  @media (min-width: 768px) {
-    .parallax-bg-fade {
-      background-attachment: fixed;
-    }
   }
 
   .page-load-fade {

@@ -105,7 +105,7 @@ export const ServicesSection = () => {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
             Services
           </h2>
         </div>

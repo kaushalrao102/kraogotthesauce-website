@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, Volume2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { useScrollManager } from "@/hooks/useScrollManager";
 import backgroundImage from "@/assets/background1.png";
 import profileImage from "@/assets/profile.png";
 import tagAudio from "@/assets/tag-audio.mp3";
@@ -10,11 +11,13 @@ export const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const bgElementRef = useRef<HTMLDivElement | null>(null);
+  const sectionTopRef = useRef<number>(0);
+  const sectionHeightRef = useRef<number>(0);
   const [isVisible, setIsVisible] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [showFullBio, setShowFullBio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   const handleProfileClick = async () => {
     if (audioRef.current) {
@@ -54,70 +57,76 @@ export const HeroSection = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Parallax effect and scroll-based darkening for background
+  // Cache section dimensions on mount and resize
   useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          if (sectionRef.current) {
-            const rect = sectionRef.current.getBoundingClientRect();
-            const sectionHeight = rect.height;
-            const scrollY = window.scrollY;
-            const sectionTop = rect.top + scrollY;
-            
-            // Calculate scroll progress within the hero section (0 to 1)
-            let progress = 0;
-            if (scrollY >= sectionTop && scrollY <= sectionTop + sectionHeight) {
-              progress = (scrollY - sectionTop) / sectionHeight;
-              progress = Math.min(Math.max(progress, 0), 1); // Clamp between 0 and 1
-            } else if (scrollY > sectionTop + sectionHeight) {
-              progress = 1; // Fully scrolled past
-            }
-
-            setScrollProgress(progress);
-
-            // Apply parallax effect only on desktop (md breakpoint and above)
-            // Disable on mobile for better performance
-            const isMobile = window.innerWidth < 768;
-            if (!isMobile && rect.bottom > 0 && rect.top < window.innerHeight) {
-              const parallaxSpeed = 0.3; // Subtle parallax
-              const translateY = scrollY * parallaxSpeed;
-              const bgElement = sectionRef.current.querySelector(
-                ".parallax-bg-fade"
-              ) as HTMLElement;
-              if (bgElement) {
-                bgElement.style.transform = `translateY(${translateY}px)`;
-              }
-            }
-
-            // Apply darkening to overlay based on scroll progress
-            if (overlayRef.current) {
-              // Start with opacity 0.4, increase to 0.65 as we scroll (reduced from 0.85 for smoother transition)
-              const minOpacity = 0.4;
-              const maxOpacity = 0.65;
-              const opacity = minOpacity + (maxOpacity - minOpacity) * progress;
-              overlayRef.current.style.opacity = opacity.toString();
-            }
-          }
-          ticking = false;
-        });
-        ticking = true;
+    const updateSectionDimensions = () => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        sectionTopRef.current = rect.top + window.scrollY;
+        sectionHeightRef.current = rect.height;
       }
     };
 
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    updateSectionDimensions();
+    window.addEventListener("resize", updateSectionDimensions, { passive: true });
+    return () => window.removeEventListener("resize", updateSectionDimensions);
+  }, []);
 
-    if (!prefersReducedMotion) {
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll(); // Initial call
-      return () => window.removeEventListener("scroll", handleScroll);
+  // Cache background element reference
+  useEffect(() => {
+    if (sectionRef.current) {
+      bgElementRef.current = sectionRef.current.querySelector(
+        ".parallax-bg-fade"
+      ) as HTMLDivElement;
     }
   }, []);
+
+  // Use shared scroll manager for parallax and overlay opacity
+  useScrollManager({
+    onScroll: (state) => {
+      if (!sectionRef.current || !overlayRef.current) return;
+
+      // Check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (prefersReducedMotion) return;
+
+      const scrollY = state.scrollY;
+      const sectionTop = sectionTopRef.current;
+      const sectionHeight = sectionHeightRef.current;
+      const sectionBottom = sectionTop + sectionHeight;
+
+      // Calculate scroll progress within the hero section (0 to 1)
+      let progress = 0;
+      if (scrollY >= sectionTop && scrollY <= sectionBottom) {
+        progress = (scrollY - sectionTop) / sectionHeight;
+        progress = Math.min(Math.max(progress, 0), 1);
+      } else if (scrollY > sectionBottom) {
+        progress = 1;
+      }
+
+      // Apply parallax effect only on desktop (md breakpoint and above)
+      // Disable on mobile for better performance
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile && bgElementRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          const parallaxSpeed = 0.3; // Subtle parallax
+          const translateY = scrollY * parallaxSpeed;
+          // Use transform3d for GPU acceleration
+          bgElementRef.current.style.transform = `translate3d(0, ${translateY}px, 0)`;
+        }
+      }
+
+      // Apply darkening to overlay based on scroll progress
+      // Start with opacity 0.4, increase to 0.65 as we scroll
+      const minOpacity = 0.4;
+      const maxOpacity = 0.65;
+      const opacity = minOpacity + (maxOpacity - minOpacity) * progress;
+      overlayRef.current.style.opacity = opacity.toString();
+    },
+  });
 
   return (
     <section
@@ -130,12 +139,13 @@ export const HeroSection = () => {
         className="absolute inset-0 parallax-bg-fade"
         style={{
           backgroundImage: `url(${backgroundImage})`,
+          willChange: "transform",
         }}
       >
         {/* Overlay for better text readability - darkens on scroll */}
         <div 
           ref={overlayRef}
-          className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background transition-opacity duration-300"
+          className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background"
           style={{
             opacity: 0.4, // Initial opacity
           }}
@@ -226,7 +236,7 @@ export const HeroSection = () => {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-border space-y-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30">
+            <div className="bg-card/50 backdrop-blur-xs md:backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-border space-y-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30">
               {!isVisible ? (
                 <div className="space-y-3">
                   <div className="h-4 bg-muted rounded animate-pulse" />

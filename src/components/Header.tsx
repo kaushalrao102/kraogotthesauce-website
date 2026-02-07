@@ -3,6 +3,7 @@ import { Instagram, Mail, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackExternalLink } from "@/lib/analytics";
 import { toast } from "@/hooks/use-toast";
+import { useScrollManager } from "@/hooks/useScrollManager";
 
 // Custom SVG icons for platforms
 const XIcon = ({ className }: { className?: string }) => (
@@ -96,43 +97,57 @@ const musicLinks = [
 ];
 
 export const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const sectionsRef = useRef<{ id: string; element: HTMLElement | null }[]>([]);
+  const isNavigatingRef = useRef(false);
 
+  // Cache section elements on mount
   useEffect(() => {
-    let ticking = false;
+    const sectionIds = ["services", "about"];
+    sectionsRef.current = sectionIds.map((id) => ({
+      id,
+      element: document.getElementById(id),
+    }));
+  }, []);
 
-    const updateScrollState = () => {
-      setIsScrolled(window.scrollY > 50);
-
-      // Determine active section (check in reverse order for proper highlighting)
-      const sections = ["services", "about"];
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150) {
-            setActiveSection(section);
+  // Use shared scroll manager
+  const { isScrolled } = useScrollManager({
+    onScroll: (state) => {
+      // Skip active section updates during programmatic navigation
+      if (isNavigatingRef.current) return;
+      
+      // Determine active section using cached elements
+      // Check in reverse order for proper highlighting
+      // This ensures the bottommost visible section is highlighted
+      let foundActive = false;
+      for (let i = sectionsRef.current.length - 1; i >= 0; i--) {
+        const section = sectionsRef.current[i];
+        if (section.element) {
+          const rect = section.element.getBoundingClientRect();
+          // Check if section is in viewport (top is above threshold, bottom is below top)
+          if (rect.top <= 150 && rect.bottom > 0) {
+            setActiveSection(section.id);
+            foundActive = true;
             break;
           }
         }
       }
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(updateScrollState);
-        ticking = true;
+      // If no section is in viewport, default to the first section (about)
+      if (!foundActive && sectionsRef.current.length > 0) {
+        const firstSection = sectionsRef.current[0];
+        if (firstSection.element) {
+          const rect = firstSection.element.getBoundingClientRect();
+          // If we're above the first section, keep it active
+          if (rect.top > 150) {
+            setActiveSection(firstSection.id);
+          }
+        }
       }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    },
+  });
 
   // Escape key handler to close mobile menu
   useEffect(() => {
@@ -200,6 +215,12 @@ export const Header = () => {
 
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
+    const sectionId = href.slice(1); // Remove "#" to get "about" or "services"
+    setActiveSection(sectionId); // Immediately update active section
+    
+    // Prevent scroll listener from interfering during smooth scroll
+    isNavigatingRef.current = true;
+    
     const element = document.querySelector(href);
     if (element) {
       // Calculate header height (h-16 md:h-20 = 64px/80px)
@@ -211,6 +232,15 @@ export const Header = () => {
         top: offsetPosition,
         behavior: "smooth",
       });
+
+      // Re-enable scroll listener after smooth scroll completes
+      // Smooth scroll typically takes ~500-600ms
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 600);
+    } else {
+      // If element not found, re-enable immediately
+      isNavigatingRef.current = false;
     }
   };
 
@@ -219,8 +249,8 @@ export const Header = () => {
       className={cn(
         "fixed top-0 left-0 right-0 w-full z-[100] transition-all duration-300",
         isScrolled
-          ? "bg-background/95 backdrop-blur-lg shadow-lg border-b border-border"
-          : "bg-background/60 backdrop-blur-sm"
+          ? "bg-background/95 backdrop-blur-sm md:backdrop-blur-lg shadow-lg border-b border-border"
+          : "bg-background/60 backdrop-blur-xs md:backdrop-blur-sm"
       )}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -332,7 +362,7 @@ export const Header = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div
-            className="fixed inset-0 top-16 bg-background/80 backdrop-blur-md md:hidden z-40"
+            className="fixed inset-0 top-16 bg-background/80 backdrop-blur-sm md:hidden z-40"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}

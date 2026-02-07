@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { trackExternalLink, trackEvent } from "@/lib/analytics";
 import { toast } from "@/hooks/use-toast";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useScrollManager } from "@/hooks/useScrollManager";
 
 // Custom SVG icons
 const XIcon = ({ className }: { className?: string }) => (
@@ -92,30 +93,14 @@ const musicLinks = [
 ];
 
 export const Footer = () => {
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const { elementRef, hasIntersected } = useIntersectionObserver({
     threshold: 0.1,
     triggerOnce: true,
   });
 
-  useEffect(() => {
-    let ticking = false;
-
-    const updateVisibility = () => {
-      setShowBackToTop(window.scrollY > 400);
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(updateVisibility);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Use shared scroll manager for back-to-top button visibility
+  const { scrollY } = useScrollManager();
+  const showBackToTop = scrollY > 400;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
