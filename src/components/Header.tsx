@@ -279,7 +279,7 @@ export const Header = () => {
                 }}
                         className={cn(
                   // Underline-only selected state; avoid focus ring "pill" on click
-                  "relative text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:underline focus-visible:underline-offset-8 focus-visible:decoration-2 focus-visible:decoration-primary rounded-none",
+                  "relative text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:underline focus-visible:underline-offset-8 focus-visible:decoration-2 focus-visible:decoration-primary rounded-none",
                           activeSection === link.href.slice(1)
                             ? "text-primary"
                             : "text-muted-foreground hover:text-foreground"
@@ -386,13 +386,16 @@ export const Header = () => {
                   handleNavClick(link.href);
                 }}
                         className={cn(
-                          "text-lg font-medium py-2 transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
+                          "relative text-lg font-medium py-2 transition-all active:scale-95 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:underline focus-visible:underline-offset-4 focus-visible:decoration-2 focus-visible:decoration-primary rounded-sm",
                           activeSection === link.href.slice(1)
                             ? "text-primary"
                             : "text-muted-foreground"
                         )}
               >
                 {link.label}
+                {activeSection === link.href.slice(1) && (
+                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full" />
+                )}
               </a>
             ))}
             

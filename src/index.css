@@ -95,21 +95,29 @@
   }
 
   /* Enhanced focus indicators for keyboard navigation */
-  *:focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
-  }
-
-  /* Ensure buttons and interactive elements have visible focus */
+  /* Removed global *:focus-visible rule for better Chrome performance */
+  /* Scoped to interactive elements only */
   button:focus-visible,
   a:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
   }
 }
 
 @layer components {
+  /* Contain static sections for better Chrome rendering performance */
+  section {
+    contain: layout style paint;
+  }
+
+  /* Contain card components for better performance */
+  .bg-card,
+  .bg-card\/50 {
+    contain: layout style paint;
+  }
+
   .hover-scale {
     @apply transition-transform duration-300 ease-out;
   }
@@ -156,11 +164,12 @@
 
   .profile-float {
     transition: transform 0.5s ease-out;
-    will-change: transform;
-    transform: translateZ(0);
+    transform: translateZ(0); /* Keep for GPU acceleration */
+    /* Removed will-change: transform from base class for better Chrome performance */
   }
 
   .profile-float:hover {
+    will-change: transform; /* Only when animating */
     animation: profileFloat 2s ease-in-out infinite;
   }
 
@@ -182,6 +191,8 @@
     );
     border-radius: 9999px;
     animation: rotateGradient 4s linear infinite;
+    will-change: transform;
+    transform: translateZ(0); /* Force GPU layer for better Chrome performance */
     z-index: -1;
   }
 
