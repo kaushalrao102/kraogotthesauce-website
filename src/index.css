@@ -124,20 +124,32 @@
   }
 
   .parallax-bg {
-    background-attachment: fixed;
+    background-attachment: scroll;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
   }
 
+  @media (min-width: 768px) {
+    .parallax-bg {
+      background-attachment: fixed;
+    }
+  }
+
   .parallax-bg-fade {
     animation: bgFadeIn 1s ease-out forwards;
-    background-attachment: fixed;
+    background-attachment: scroll;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     will-change: opacity;
     contain: paint;
+  }
+
+  @media (min-width: 768px) {
+    .parallax-bg-fade {
+      background-attachment: fixed;
+    }
   }
 
   .page-load-fade {

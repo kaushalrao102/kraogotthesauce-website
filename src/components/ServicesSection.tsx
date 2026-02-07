@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import beatmakingImage from "@/assets/beatmaking.png";
 import masteringImage from "@/assets/mastering.png";
 import critiqueImage from "@/assets/critique.png";
@@ -25,7 +26,7 @@ const services: Service[] = [
     title: "Beatmaking",
     tagline: "Custom instrumentals crafted to your vision",
     description:
-      "I love making music, and I feel inspired when challenged to create a specific sound. If you are an artist or musical enthusiast looking for a specific type of production, let me know and we can work together on it. I’ve made beats in a variety of genres (bay area, trap, cloud, detroit, rage, hyperpop, RnB, etc.) and I don’t hold myself back from experimentation.",
+      "I love making music, and I feel inspired when challenged to create a specific sound. If you are an artist or musical enthusiast looking for a specific type of production, let me know and we can work together on it. I’ve made beats in a variety of genres (Bay Area, trap, cloud, detroit, rage, hyperpop, RnB, etc.) and I don’t hold myself back from experimentation.",
     image: beatmakingImage,
     imageAlt: "hands on MPC creating hip-hop beats",
   },
@@ -104,7 +105,7 @@ export const ServicesSection = () => {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
             Services
           </h2>
         </div>
@@ -132,7 +133,7 @@ export const ServicesSection = () => {
                       {!loadedImages[service.id] && (
                         <Skeleton className="absolute inset-0 w-full h-full rounded-full" />
                       )}
-                      <img
+                      <OptimizedImage
                         src={service.image}
                         alt={service.imageAlt}
                         className={`w-full h-full object-cover transition-opacity duration-500 ${
@@ -145,10 +146,10 @@ export const ServicesSection = () => {
                     
                     {/* Service Info */}
                     <div className="flex-1 text-left">
-                      <h3 className="text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                      <h3 className="text-xl md:text-2xl font-semibold text-foreground group-hover:text-primary transition-colors">
                         {service.title}
                       </h3>
-                      <p className="text-sm md:text-base text-muted-foreground mt-1">
+                      <p className="text-base md:text-lg text-muted-foreground mt-1">
                         {service.tagline}
                       </p>
                     </div>
@@ -157,7 +158,7 @@ export const ServicesSection = () => {
                 
                 <AccordionContent className="px-6 pb-6">
                   <div className="pt-4 border-t border-border">
-                    <p className="text-muted-foreground leading-relaxed mb-4">
+                    <p className="text-muted-foreground leading-relaxed mb-4 text-base md:text-lg">
                       {service.description}
                     </p>
                     <button

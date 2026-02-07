@@ -75,7 +75,7 @@ const socialLinks = [
 
 const musicLinks = [
   {
-    href: "https://open.spotify.com/artist/2D93GdQLZxSWecarb2NIY9?si=Y1nKWb0GRsynT7ZDt4Dq0A",
+    href: "https://open.spotify.com/artist/2D93GdQLZxSWecarb2NIY9?si=3gDIhEaJQwa1oIokwarIiQ",
     label: "Listen on Spotify",
     icon: SpotifyIcon,
   },
@@ -227,7 +227,7 @@ export const Footer = () => {
 
         {/* Copyright */}
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             © {new Date().getFullYear()} kraogotthesauce. All rights reserved.
           </p>
         </div>

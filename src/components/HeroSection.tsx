@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, Volume2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import backgroundImage from "@/assets/background1.png";
 import profileImage from "@/assets/profile.png";
 import tagAudio from "@/assets/tag-audio.mp3";
@@ -77,8 +78,10 @@ export const HeroSection = () => {
 
             setScrollProgress(progress);
 
-            // Apply parallax effect
-            if (rect.bottom > 0 && rect.top < window.innerHeight) {
+            // Apply parallax effect only on desktop (md breakpoint and above)
+            // Disable on mobile for better performance
+            const isMobile = window.innerWidth < 768;
+            if (!isMobile && rect.bottom > 0 && rect.top < window.innerHeight) {
               const parallaxSpeed = 0.3; // Subtle parallax
               const translateY = scrollY * parallaxSpeed;
               const bgElement = sectionRef.current.querySelector(
@@ -167,12 +170,13 @@ export const HeroSection = () => {
               {!profileLoaded && (
                 <Skeleton className="absolute inset-0 w-40 h-40 md:w-52 md:h-52 rounded-full" />
               )}
-              <img
+              <OptimizedImage
                 src={profileImage}
                 alt="Kaushal Rao - music producer (kraogotthesauce) portrait"
                 className={`relative w-40 h-40 md:w-52 md:h-52 rounded-full object-cover transition-opacity duration-500 ${
                   profileLoaded ? "opacity-100" : "opacity-0"
                 }`}
+                loading="eager"
                 onLoad={() => setProfileLoaded(true)}
               />
               {/* Audio playing indicator */}
@@ -216,7 +220,7 @@ export const HeroSection = () => {
 
           {/* Full Bio */}
           <div
-            className={`max-w-2xl mx-auto text-left md:text-center transition-all duration-700 delay-[400ms] ${
+            className={`max-w-2xl lg:max-w-4xl mx-auto text-left md:text-center transition-all duration-700 delay-[400ms] ${
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
@@ -231,22 +235,22 @@ export const HeroSection = () => {
                 </div>
               ) : (
                 <>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                 Hi! Thank you for visiting my website. My name is Kaushal Rao, and I produce hip-hop music under the alias <strong className="text-primary/90">kraogotthesauce</strong>. My catalog spans multiple projects, including two beat tapes, two full-length albums, and a growing collection of singles. While much of my early work lives on SoundCloud, my more recent releases are available across all major streaming platforms.
               </p>
               
               {/* Expandable content */}
               <div className={`space-y-4 overflow-hidden transition-all duration-500 ${showFullBio ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}`}>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                   I grew up playing the trumpet and violin, which gave me an early musical foundation. In middle school, I started listening to hip-hop and quickly gravitated toward artists like Eminem, Drake, Lil Wayne, and Dr. Dre. I started making music on Garageband, primarily because I wanted to make music but didn't really have anything to rap about. A few years later, I transitioned to Logic Pro X, giving me greater control and creative flexibility in my workflow.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                   Since then, I've focused on experimenting across subgenres and collaborating with emerging artists to bring full songs to life. I released my first beat tape, <em className="text-primary/80">Resolutionzzzzz</em>, in 2017, followed by <em className="text-primary/80">Vacationzzzzz</em> in 2018. These projects marked an early period of exploration, helping define my style while pushing me to try new sounds, tempos, and textures.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                   In 2019, I released my first ever full-length album (<em className="text-primary/80">Revelationzzzzz</em>) in collaboration with different underground artists including LEEWAY, Krishu, Soul-G, BISSIBOI, and Ca$hfllow. Several years later in 2023, I released another full-length album (<em className="text-primary/80">Sauce!</em>) that I am really proud of. I got a lot better at producing, mixing, and mastering during those years in between, and also was able to work with talented artists like seiji oda, Surf, Kevin Kazi, 6ixteenth, Reezan, and airy baby.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
                   Music remains both a creative outlet and a constant through my life. I've been working on a new album since 2024, and I hope to release it this year. Let's see.
                 </p>
               </div>
