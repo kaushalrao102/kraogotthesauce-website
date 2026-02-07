@@ -28,7 +28,7 @@ export const WaveformDivider = () => {
       <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       
       {/* Waveform GIF with glow - wrapper allows glow to extend */}
-      <div className="relative z-10 px-8 py-8">
+      <div className="relative z-10 px-8 py-8 -mt-4 md:-mt-5">
         <div className="relative animate-pulse-subtle">
           {/* Glow effect */}
           <div className="absolute inset-0 blur-xl bg-primary/20 rounded-full scale-110" />
