@@ -71,7 +71,7 @@ const socialLinks = [
     icon: XIcon,
   },
   {
-    href: "mailto:kraogotthesauce@gmail.com",
+    href: "mailto:kaushalrao101@gmail.com",
     label: "Email",
     icon: Mail,
   },
@@ -356,7 +356,7 @@ export const Header = () => {
                   handleNavClick(link.href);
                 }}
                         className={cn(
-                          "text-lg font-medium py-2 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm",
+                          "text-lg font-medium py-2 transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
                           activeSection === link.href.slice(1)
                             ? "text-primary"
                             : "text-muted-foreground"

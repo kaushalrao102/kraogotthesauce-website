@@ -67,7 +67,7 @@ const socialLinks = [
     icon: XIcon,
   },
   {
-    href: "mailto:kraogotthesauce@gmail.com",
+    href: "mailto:kaushalrao101@gmail.com",
     label: "Send an email",
     icon: Mail,
   },
@@ -123,7 +123,7 @@ export const Footer = () => {
   };
 
   const handleEmailClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const email = "kraogotthesauce@gmail.com";
+    const email = "kaushalrao101@gmail.com";
     try {
       await navigator.clipboard.writeText(email);
       toast({

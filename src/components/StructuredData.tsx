@@ -18,7 +18,7 @@ export const StructuredData = () => {
       "https://music.apple.com/us/artist/kraogotthesauce/1506258415",
       "https://soundcloud.com/kraogotthesauce"
     ],
-    "email": "kraogotthesauce@gmail.com",
+    "email": "kaushalrao101@gmail.com",
     "knowsAbout": [
       "Hip-Hop Music Production",
       "Beatmaking",
