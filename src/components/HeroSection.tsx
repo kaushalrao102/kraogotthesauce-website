@@ -245,22 +245,22 @@ export const HeroSection = () => {
                 </div>
               ) : (
                 <>
-                  <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+                  <p className="text-foreground/90 md:text-muted-foreground leading-relaxed text-base md:text-lg">
                 Hi! Thank you for visiting my website. My name is Kaushal Rao, and I produce hip-hop music under the alias <strong className="text-primary/90">kraogotthesauce</strong>. My catalog spans multiple projects, including two beat tapes, two full-length albums, and a growing collection of singles. While much of my early work lives on SoundCloud, my more recent releases are available across all major streaming platforms.
               </p>
               
               {/* Expandable content */}
               <div className={`space-y-4 overflow-hidden transition-all duration-500 ${showFullBio ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}`}>
-                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+                <p className="text-foreground/90 md:text-muted-foreground leading-relaxed text-base md:text-lg">
                   I grew up playing the trumpet and violin, and in middle school, I started listening to hip-hop music. I started making music on Garageband, primarily because I wanted to make music myself, but didn't really have anything to rap about. A few years later, I transitioned to Logic Pro X, giving me greater control and creative flexibility in my workflow.
                 </p>
-                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+                <p className="text-foreground/90 md:text-muted-foreground leading-relaxed text-base md:text-lg">
                   I released my first beat tape, <em className="text-primary/80">Resolutionzzzzz</em>, in 2017, followed by <em className="text-primary/80">Vacationzzzzz</em> in 2018. These projects marked an early period of exploration, helping define my sound.
                 </p>
-                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
-                  In 2019, I released my first ever full-length album (<em className="text-primary/80">Revelationzzzzz</em>) in collaboration with a variety of underground artists including LEEWAY, Krishu, Soul-G, BISSIBOI, and Ca$hfllow. Several years later in 2023, I released another full-length album (<em className="text-primary/80">Sauce!</em>). I got a lot better at producing, mixing, and mastering, and was able to work with talented artists like seiji oda, Surf, Kevin Kazi, 6ixteenth, Reezan, and airy baby.
+                <p className="text-foreground/90 md:text-muted-foreground leading-relaxed text-base md:text-lg">
+                  In 2019, I released my first ever full-length album (<em className="text-primary/80">Revelationzzzzz</em>) in collaboration with a variety of underground artists including LEEWAY, Krishu, Soul-G, BISSIBOI, and Ca$hfllow. Several years later in 2023, I released another full-length album (<em className="text-primary/80">Sauce!</em>). I got a lot better at producing, mixing, and mastering, and was able to work with talented artists like seiji oda, Surf, Kevin Kazi, 6IXTEENTH, Reezan, and AIRY BABY.
                 </p>
-                <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+                <p className="text-foreground/90 md:text-muted-foreground leading-relaxed text-base md:text-lg">
                   Music remains both a creative outlet and a constant through my life. I've been working on a new album since 2024, and I hope to release it this year. Let's see.
                 </p>
               </div>
